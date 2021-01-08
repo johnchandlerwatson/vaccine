@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace vaccine.core
 {
@@ -6,7 +7,7 @@ namespace vaccine.core
     {
         public static ComparisonResults Compare(Rna candidate, Rna vaccine, Rna virus)
         {
-            var equalCount = 0;
+            var codonEqualCount = 0;
             var codonIndex = 0;
             var incorrect = new Dictionary<string, int>();
             foreach (var candidateCodon in candidate.Codons)
@@ -14,7 +15,7 @@ namespace vaccine.core
                 var vaccineCodon = vaccine.Codons[codonIndex].Nucleotides;
                 if (candidateCodon.Nucleotides == vaccineCodon)
                 {
-                    equalCount++;
+                    codonEqualCount++;
                 }
                 else
                 {
@@ -29,7 +30,25 @@ namespace vaccine.core
                 }
                 codonIndex++;
             }
-            return new ComparisonResults(equalCount, candidate.Codons.Count, incorrect, candidate, vaccine, virus);
+            var candidateNucleotides = candidate.Codons.SelectMany(x => x.Nucleotides).ToList(); 
+            var nucleotideEqualCount = GetCorrectNucleotides(candidate, vaccine, candidateNucleotides);
+            return new ComparisonResults(codonEqualCount, candidate.Codons.Count, nucleotideEqualCount, candidateNucleotides.Count(), incorrect, candidate, vaccine, virus);
+        }
+
+        private static int GetCorrectNucleotides(Rna candidate, Rna vaccine, List<char> candidateNucleotides)
+        {
+            var vaccineNucleotides = vaccine.Codons.SelectMany(x => x.Nucleotides).ToList();
+            var nucleotideIndex = 0;
+            var nucleotideEqualCount = 0;
+            foreach (var nucleotide in candidateNucleotides)
+            {
+                if (nucleotide == vaccineNucleotides[nucleotideIndex])
+                {
+                    nucleotideEqualCount++;
+                }
+                nucleotideIndex++;
+            }
+            return nucleotideEqualCount;
         }
     }
 }

@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using System.Linq;
+using System.Text.Json;
 
 namespace vaccine.core
 {
@@ -10,10 +10,9 @@ namespace vaccine.core
             var vaccineCandidate = new Rna();
             foreach(var virusCodon in Protein.VirusProtein.Codons)
             {
-                var fullReplacement = FullReplacements.FirstOrDefault(x => x.VirusCodons.Contains(virusCodon.Nucleotides));
-                if (fullReplacement != null)
+                if (FullReplacements.ContainsKey(virusCodon.Nucleotides))
                 {
-                    vaccineCandidate.Codons.Add(new Codon(virusCodon.Index, fullReplacement.VaccineCodon));
+                    vaccineCandidate.Codons.Add(new Codon(virusCodon.Index, FullReplacements[virusCodon.Nucleotides]));
                 }
                 else if (virusCodon.Nucleotides.EndsWith('T')) 
                 {
@@ -31,11 +30,7 @@ namespace vaccine.core
             return vaccineCandidate;
         }
 
-        private static List<CodonReplacement> FullReplacements => new List<CodonReplacement>
-        {
-            new CodonReplacement("CTG", "TTA", "TTG", "CTT"),
-            new CodonReplacement("GTG", "GTT", "GTC"),
-            new CodonReplacement("ACC", "ACG")
-        };
+        private static Dictionary<string, string> FullReplacements => JsonSerializer.Deserialize<Dictionary<string, string>>(ReplacementDictionary);
+        private static string ReplacementDictionary => "{\"ATG\":\"ATG\",\"TTT\":\"TTC\",\"GTT\":\"GTG\",\"CTT\":\"CTG\",\"TTA\":\"CTG\",\"TTG\":\"CTG\",\"CCA\":\"CCC\",\"CTA\":\"CTG\",\"GTC\":\"GTG\",\"AGT\":\"AGC\",\"CAG\":\"CAG\",\"TGT\":\"TGC\",\"AAT\":\"AAC\",\"ACA\":\"ACC\",\"ACC\":\"ACC\",\"CAA\":\"CAG\",\"CCC\":\"CCC\",\"CCT\":\"CCT\",\"GCA\":\"GCC\",\"TAC\":\"TAC\",\"TTC\":\"TTC\",\"CGT\":\"AGA\",\"GGT\":\"GGC\",\"TAT\":\"TAC\",\"GAC\":\"GAC\",\"AAA\":\"AAG\",\"TCC\":\"AGC\",\"TCA\":\"AGC\",\"CAT\":\"CAC\",\"TGG\":\"TGG\",\"GCT\":\"GCC\",\"ATA\":\"ATC\",\"GGG\":\"GGA\",\"AAG\":\"AAG\",\"AGG\":\"CGG\",\"GAT\":\"GAC\",\"AAC\":\"AAC\",\"GAG\":\"GAG\",\"GGC\":\"GGC\",\"ATT\":\"ATC\",\"GAA\":\"GAG\",\"CAC\":\"CAC\",\"GCG\":\"GCC\",\"TGC\":\"TGC\",\"GGA\":\"GGC\",\"GTG\":\"GTG\",\"ACG\":\"ACC\",\"CTC\":\"CTG\",\"GTA\":\"GTG\",\"ATC\":\"ATC\",\"GCC\":\"GCC\",\"AGC\":\"AGC\",\"CTG\":\"CTG\",\"CGC\":\"CGG\",\"TAA\":\"TGA\"}"; 
     }
 }
