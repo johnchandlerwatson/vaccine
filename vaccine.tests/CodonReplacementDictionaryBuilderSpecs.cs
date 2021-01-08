@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
@@ -26,10 +27,11 @@ namespace vaccine.tests
                 replacmentsAnaylsis.Add(new VirusCodonReplacementAnalysis(codon, percentages));
             }
             
-            var percentThreshold = 55;
+            var percentThreshold = 50;
             var replacementCandidates = replacmentsAnaylsis.Where(x => x.CodonOccurances.Any(y => y.Percentage >= percentThreshold)).ToList();
             var replacements = replacementCandidates.ToDictionary(x => x.VirusCodon, x => x.CodonOccurances.OrderByDescending(y => y.Percentage).First().VaccineCodon);
-            var json = JsonSerializer.Serialize(replacements); //used in Algorithm
+            var json = JsonSerializer.Serialize(replacements); 
+            Console.WriteLine(json); //used in Algorithm
         }
     }
 

@@ -22,8 +22,8 @@ namespace vaccine.core
         public int MatchingNucleotides { get; }
         public int TotalCodons { get; }
         public int TotalNucleotides { get; }
-        public decimal CodonPercentMatching => Math.Round(((decimal) MatchingCodons) / ((decimal) TotalCodons) * 100);
-        public decimal NucleotidePercentMatching => Math.Round(((decimal) MatchingNucleotides) / ((decimal) TotalNucleotides) * 100);
+        public decimal CodonPercentMatching => Math.Round(((decimal) MatchingCodons) / ((decimal) TotalCodons) * 100, 2);
+        public decimal NucleotidePercentMatching => Math.Round(((decimal) MatchingNucleotides) / ((decimal) TotalNucleotides) * 100, 2);
         public Dictionary<string, int> NonmatchingCodons { get; }
         public Rna Candidate { get; }
         public Rna Vaccine { get; }
